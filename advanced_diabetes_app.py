@@ -860,8 +860,6 @@ def main():
                     st.session_state.session_id, patient_id
                 ):
                     st.success(f"📝 Prediction logged successfully to {storage_type}")
-                     # Developer Attribution
-                     st.markdown("### 👨‍💻 Developer")
                      st.markdown("**Made by:** KEDAR.V.RANJANKAR")
                 else:
                     st.warning(f"⚠️ Failed to log prediction to {storage_type}")
