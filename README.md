@@ -14,14 +14,22 @@ This project develops a machine learning system to predict diabetes risk using t
   - **Streamlit App**: Web-based interface for model selection, patient data input, and prediction with logging.
   - **Jupyter App**: `ipywidgets`-based interface for use within Jupyter Notebook.
 - **Prediction Logging**: Saves inputs, model used, prediction, probability, risk level, and timestamp to `log.csv`.
-
-
+- **Google Sheets Integration**: Support for cloud-based data storage and sharing via Google Sheets API.
+- **Enhanced Visualizations**: Interactive plots and charts using Plotly for better data insights.
 
 ## Requirements
 - Python 3.8+
-- Libraries:
+- Core Libraries:
   ```bash
-  pip install pandas numpy scikit-learn joblib streamlit ipywidgets matplotlib seaborn
+  pip install streamlit>=1.28.0 numpy>=1.21.0 pandas>=1.3.0 scikit-learn>=1.0.0 joblib>=1.1.0 plotly>=5.0.0 ipywidgets matplotlib seaborn
+  ```
+- Google Sheets Integration (Optional):
+  ```bash
+  pip install gspread>=5.7.0 google-auth>=2.15.0 gspread-dataframe>=3.3.0
+  ```
+- Additional Dependencies:
+  ```bash
+  pip install pathlib2>=2.3.0
   ```
 - Jupyter Notebook (for running `.py` files as notebooks or using the `ipywidgets` app)
 - Dataset: `diabetes.csv` (included or generated synthetically in Part 1)
@@ -32,20 +40,60 @@ This project develops a machine learning system to predict diabetes risk using t
    git clone <repository-url>
    cd diabetes_prediction
    ```
+
 2. **Install Dependencies**:
+   
+   **Option A: Using requirements.txt** (Recommended):
    ```bash
    pip install -r requirements.txt
    ```
-   Or manually:
+   
+   **Option B: Manual Installation**:
    ```bash
-   pip install pandas numpy scikit-learn joblib streamlit ipywidgets matplotlib seaborn
+   # Core dependencies
+   pip install streamlit>=1.28.0 numpy>=1.21.0 pandas>=1.3.0 scikit-learn>=1.0.0 joblib>=1.1.0 plotly>=5.0.0 ipywidgets matplotlib seaborn
+   
+   # Google Sheets integration (optional)
+   pip install gspread>=5.7.0 google-auth>=2.15.0 gspread-dataframe>=3.3.0
+   
+   # Additional utilities
+   pip install pathlib2>=2.3.0
    ```
-3. **Prepare Dataset**:
+
+3. **Create requirements.txt** (if not provided):
+   Create a `requirements.txt` file with the following content:
+   ```
+   streamlit>=1.28.0
+   numpy>=1.21.0
+   pandas>=1.3.0
+   scikit-learn>=1.0.0
+   joblib>=1.1.0
+   plotly>=5.0.0
+   ipywidgets>=7.6.0
+   matplotlib>=3.3.0
+   seaborn>=0.11.0
+   gspread>=5.7.0
+   google-auth>=2.15.0
+   gspread-dataframe>=3.3.0
+   pathlib2>=2.3.0
+   ```
+
+4. **Prepare Dataset**:
    - Ensure `diabetes.csv` is in the project directory. If using synthetic data, run `diabetes_part1.py` to generate it.
-4. **Enable Jupyter Widgets** (for `ipywidgets` app):
+
+5. **Enable Jupyter Widgets** (for `ipywidgets` app):
    ```bash
    jupyter nbextension enable --py widgetsnbextension
    ```
+
+6. **Google Sheets Setup** (Optional):
+   - Create a Google Cloud Project and enable the Google Sheets API
+   - Download the service account JSON credentials
+   - Place the credentials file in your project directory
+   - Set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable:
+     ```bash
+     export GOOGLE_APPLICATION_CREDENTIALS="path/to/your/credentials.json"
+     ```
 
 ## Usage
 ### Running the Project
@@ -55,17 +103,20 @@ This project develops a machine learning system to predict diabetes risk using t
    ```python
    %run diabetes_part1.py
    ```
+
 2. **Part 2: Model Training and Evaluation (`diabetes_part2_complete 1.py`)**:
    - Run all cells to train and evaluate seven models, select the best model, and save it as `best_diabetes_model_model.pkl`.
    ```python
    %run diabetes_part2_complete 1.py
    ```
+
 3. **Part 3: Advanced Analysis and Deployment (`diabetes_part3.py`)**:
    - Run all cells for hyperparameter tuning, cross-validation, feature importance, and interactive prediction examples.
    - Generates `model_results` with trained models.
    ```python
    %run diabetes_part3.py
    ```
+
 4. **Save All Models**:
    - After running Part 3, execute the following in a new cell to save all models:
      ```python
@@ -82,28 +133,34 @@ This project develops a machine learning system to predict diabetes risk using t
 #### Streamlit App
 1. **Save the Script**:
    - Copy `advanced_diabetes_app.py` to the project directory.
+
 2. **Run the App**:
    ```python
    import subprocess
    subprocess.run(["streamlit", "run", "advanced_diabetes_app.py"])
    ```
    - Opens at `http://localhost:8501`.
+
 3. **Interact**:
    - Select a model from the dropdown (e.g., Random Forest).
    - Enter patient details (Pregnancies, Glucose, etc.).
+   - View enhanced visualizations powered by Plotly.
    - Click "Predict Diabetes Risk" to view prediction, probability, risk level (HIGH/MODERATE/LOW), and input features.
-   - Predictions are logged to `log.csv`.
+   - Predictions are logged to `log.csv` and optionally to Google Sheets.
+
 4. **Stop the App**:
    - Interrupt the cell (Ctrl+C) or close the terminal.
 
 #### Jupyter-Native App
 1. **Run the Script**:
    - Copy `diabetes_prediction_jupyter_all_models.py` into a Jupyter Notebook cell and execute.
+
 2. **Interact**:
    - Select a model from the dropdown.
    - Adjust sliders for patient details.
    - Click "Predict Diabetes Risk" to see results in the notebook.
    - Predictions are logged to `log.csv`.
+
 3. **View Log**:
    ```python
    import pandas as pd
@@ -132,6 +189,7 @@ This project develops a machine learning system to predict diabetes risk using t
     from diabetes_part3 import train_and_evaluate_models
     model_results = train_and_evaluate_models(X_train, X_test, y_train, y_test)
     ```
+
 - **Missing Scaler**:
   - Models like Logistic Regression, SVM, and KNN require `diabetes_scaler.pkl`. Recreate it:
     ```python
@@ -139,6 +197,7 @@ This project develops a machine learning system to predict diabetes risk using t
     import numpy as np
     from sklearn.preprocessing import StandardScaler
     from sklearn.model_selection import train_test_split
+    import joblib
 
     diabetes_data = pd.read_csv("diabetes.csv")
     zero_replacement_features = ['Glucose', 'BloodPressure', 'SkinThickness', 'Insulin', 'BMI']
@@ -153,20 +212,42 @@ This project develops a machine learning system to predict diabetes risk using t
     joblib.dump(scaler, "diabetes_scaler.pkl")
     ```
   - Non-scaling models (Random Forest, Gradient Boosting, Decision Tree, Naive Bayes) work without it.
+
 - **Streamlit Issues**:
   - Verify installation: `streamlit --version`.
   - Check port 8501: `lsof -i :8501`.
+  - Ensure Streamlit version compatibility: `pip install --upgrade streamlit>=1.28.0`.
+
 - **ipywidgets Not Displaying**:
   - Enable widgets: `jupyter nbextension enable --py widgetsnbextension`.
+  - For JupyterLab: `jupyter labextension install @jupyter-widgets/jupyterlab-manager`.
+
+- **Plotly Visualization Issues**:
+  - Ensure Plotly is properly installed: `pip install --upgrade plotly>=5.0.0`.
+  - For Jupyter: `pip install "notebook>=5.3" "ipywidgets>=7.2"`.
+
+- **Google Sheets Integration Issues**:
+  - Verify Google credentials are properly set up.
+  - Check API quotas and permissions.
+  - Ensure gspread and dependencies are up to date.
+
 - **Log File Errors**:
   - Check write permissions: `pd.DataFrame([{'test': 1}]).to_csv('log.csv')`.
   - Ensure no file locks: `lsof log.csv`.
 
+- **Pathlib2 Import Issues**:
+  - This package provides backports for older Python versions. If using Python 3.8+, the built-in `pathlib` should suffice.
+  - For compatibility issues, ensure pathlib2>=2.3.0 is installed.
+
 ## Future Improvements
-- Add visualizations (e.g., feature importance plots) to the apps.
-- Implement model performance comparison in the Streamlit app.
-- Support batch predictions from a CSV file.
-- Containerize the project using Docker for portability.
+- Add more sophisticated visualizations using Plotly's advanced features.
+- Implement real-time Google Sheets synchronization for collaborative predictions.
+- Support batch predictions from CSV files with progress tracking.
+- Add model performance comparison dashboards in the Streamlit app.
+- Implement automated model retraining workflows.
+- Add support for additional cloud storage backends (AWS S3, Azure Blob).
+- Containerize the project using Docker for improved portability.
+- Add comprehensive unit tests and CI/CD pipelines.
 
 ## Contributors
 - KEDAR .V. RANJANKAR
@@ -176,4 +257,5 @@ This project is licensed under the MIT License.
 
 ## Acknowledgments
 - Pima Indian Diabetes Dataset
-- Scikit-learn, Streamlit, and Jupyter communities
+- Scikit-learn, Streamlit, Plotly, and Jupyter communities
+- Google Sheets API for cloud integration capabilities
