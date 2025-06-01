@@ -679,7 +679,9 @@ def main():
         else:
             st.error("❌ Model loading failed")
             st.stop()
-    
+    # Developer Attribution 
+    st.markdown("### 👨‍💻 Developer") 
+    st.markdown("**Made by:** KEDAR.V.RANJANKAR")
     # Main content
     if page == "🔮 Prediction":
         st.title("🔮 Advanced Diabetes Risk Prediction")
@@ -860,7 +862,6 @@ def main():
                     st.session_state.session_id, patient_id
                 ):
                     st.success(f"📝 Prediction logged successfully to {storage_type}")
-                     st.markdown("**Made by:** KEDAR.V.RANJANKAR")
                 else:
                     st.warning(f"⚠️ Failed to log prediction to {storage_type}")
             
