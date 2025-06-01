@@ -679,11 +679,6 @@ def main():
         else:
             st.error("❌ Model loading failed")
             st.stop()
-     # Developer Attribution
-    st.markdown("---")
-    st.markdown("### 👨‍💻 Developer")
-    st.markdown("**Made by:** KEDAR.V.RANJANKAR")
-    st.markdown("*Diabetes Risk Prediction System*")
     
     # Main content
     if page == "🔮 Prediction":
@@ -865,6 +860,9 @@ def main():
                     st.session_state.session_id, patient_id
                 ):
                     st.success(f"📝 Prediction logged successfully to {storage_type}")
+                     # Developer Attribution
+                     st.markdown("### 👨‍💻 Developer")
+                     st.markdown("**Made by:** KEDAR.V.RANJANKAR")
                 else:
                     st.warning(f"⚠️ Failed to log prediction to {storage_type}")
             
@@ -956,7 +954,7 @@ def main():
         **Active Storage Method**: {storage_type}
         
         ---
-        **Built with ❤️ for Healthcare Innovation | © 2025**
+        **Built with ❤️ for Healthcare Innovation | KEDAR.V.RANJANKAR © 2025**
         """)
 
 if __name__ == "__main__":
