@@ -1,0 +1,8 @@
+id,timestamp,patient_id,pregnancies,glucose,blood_pressure,skin_thickness,insulin,bmi,diabetes_pedigree_function,age,prediction,probability,risk_level,model_name,session_id
+1,2025-05-30 12:19:04,rao,0,120.0,90.0,23.0,170.0,38.0,0.5,45,1,0.68,HIGH,RandomForestClassifier,843b6e2d
+2,2025-05-30 12:20:01,patient_20250530_122001,1,120.0,72.0,23.0,100.0,32.0,0.5,30,0,0.31,LOW,RandomForestClassifier,843b6e2d
+3,2025-05-30 12:22:51,patient_20250530_122251,4,180.0,72.0,23.0,100.0,32.0,0.5,80,1,0.59,MODERATE,RandomForestClassifier,843b6e2d
+4,2025-05-30 16:40:41,patient_20250530_164041,1,120.0,72.0,23.0,100.0,32.0,0.5,30,0,0.31,LOW,RandomForestClassifier,4c630e9b
+5,2025-05-30 16:54:56,am,3,120.0,72.0,23.0,100.0,32.0,0.5,80,0,0.35,LOW,RandomForestClassifier,7b650760
+6,2025-05-30 16:57:09,abc,0,190.0,92.0,27.0,180.0,34.0,0.56,46,1,0.89,VERY HIGH,RandomForestClassifier,7b650760
+7,2025-05-31 15:30:56,patient_20250531_153056,1,120.0,72.0,23.0,100.0,32.0,0.5,30,0,0.31,LOW,RandomForestClassifier,a6f1584c
