@@ -679,6 +679,11 @@ def main():
         else:
             st.error("❌ Model loading failed")
             st.stop()
+     # Developer Attribution
+    st.markdown("---")
+    st.markdown("### 👨‍💻 Developer")
+    st.markdown("**Made by:** KEDAR.V.RANJANKAR")
+    st.markdown("*Diabetes Risk Prediction System*")
     
     # Main content
     if page == "🔮 Prediction":
